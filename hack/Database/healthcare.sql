@@ -17,7 +17,7 @@ Create Table tpatient
 
 Create Table tPatientAddress
 (
-	pid Int Unsigned Not Null Primary Key,
+	pid Int Unsigned Not Null,
 	StreetAddress1 nvarchar(100) Not Null,
     StreetAddress2 nvarchar(100) Not Null,
     City nvarchar(100) Not Null,
