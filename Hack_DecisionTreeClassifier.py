@@ -21,7 +21,7 @@ patients = pandas.read_csv("C:/Users/Micar/Desktop/Hack_Consumer_data_csv.csv", 
 
 #some data cleaning
 #drop columns we don't need
-claims = claims.drop(['Diagnosis','total_amount','numberofClaims'],axis=1)
+claims = claims.drop(['Diagnosis','total_amount','numberofClaims','HackID'],axis=1)
 
 #need to convert categorical data to numbers
 le = preprocessing.LabelEncoder()
@@ -33,10 +33,10 @@ x = x.apply(le.fit_transform)
 
 #putting x and y back together to use later as one dataframe
 claims = pandas.concat([x,y],axis=1) 
-print(claims.shape)
-print(x.shape)
-print(y.shape)
-print(claims)
+#print(claims.shape)
+#print(x.shape)
+#print(y.shape)
+#print(claims)
 
 def buildmodel(x,y):
     #choose column with highest correlation(gender, race, ethnicity, diagnosis code, servicesummary)
@@ -51,12 +51,15 @@ def buildmodel(x,y):
     #y = claims.iloc[:,-1]
     healthcareTree = tree.DecisionTreeRegressor()
     healthcareTree.fit(x,y) #getting ValueError: could not convert string to float: 'F339', need to use labelencorder, in progress
+   
+    return healthcareTree
 
-def chooseColumn(claims):
+def estimatecost(healthcareTree,testx):
     #iterate dataframe to find column most highly correlated with cost
     #numpy correcoef may be useful here
     #return index of best column
-    pass
+    cost = healthcareTree.predict(testx)
+    return cost
     
 def searchmodel(data):
     #use input data to search model
@@ -66,5 +69,11 @@ def searchmodel(data):
 
 if __name__ == "__main__":
 		#for testing
-		buildmodel(x,y)
+      #[70300,13,607]
+      testx = x.iloc[1500,:] #np.random.randn(1, 3))
+      #textx = testx.reshape(1,-1)
+      print(testx)
+      model = buildmodel(x,y)
+      cost = estimatecost(model,testx)
+      print(cost)
       #pass
