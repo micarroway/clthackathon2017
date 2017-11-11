@@ -76,8 +76,10 @@ WSGI_APPLICATION = 'hack.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'healthcare',
+        'USER': 'hack',
+        'PASSWORD': 'hack',
         'OPTIONS': {
-            'read_default_file': 'my.cnf',
             'init_command': "SET default_storage_engine=INNODB; SET sql_mode='STRICT_TRANS_TABLES';"
         }
     }
