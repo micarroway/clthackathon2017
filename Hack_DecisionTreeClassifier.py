@@ -22,60 +22,47 @@ patients = pandas.read_csv("C:/Users/Micar/Desktop/Hack_Consumer_data_csv.csv", 
 patientclaims = patients.merge(claims, on=['HackID'], how='inner')
 patientclaims = patientclaims.drop(['Diagnosis','total_amount','numberofClaims','HackID'],axis=1)
 #need to convert categorical data to numbers
-le = preprocessing.LabelEncoder()
-le.fit(claims['DiagnosisCode'])    
-le.transform(claims['DiagnosisCode'])
+le = preprocessing.LabelEncoder()  
 x = patientclaims.iloc[:,:-1]
 y = patientclaims.iloc[:,-1]
 x = x.apply(le.fit_transform)
 
 #putting x and y back together to use later as one dataframe
 patientclaims = pandas.concat([x,y],axis=1) 
+xtrain, xtest, ytrain, ytest = train_test_split( x, y, test_size = 0.1, random_state = 100)
 #print(claims.shape)
 #print(x.shape)
 #print(y.shape)
 #print(claims)
 
 def buildmodel(x,y):
-    #choose column with highest correlation(gender, race, ethnicity, diagnosis code, servicesummary)
-    #split data set in half by rows, based on that column, for example, use average cost to split everything into two data sets above and below
-    #recurse tree
-        #recurse tree
-            #recurse tree
-    #if only one column left, and one row left return answer
-    #if only one column left and multiple rows left, take average
-    #return new dataframe with trained estimates
-    #x = claims.iloc[:,:-1]
-    #y = claims.iloc[:,-1]
-    healthcareTree = tree.DecisionTreeRegressor()
+    #use decision tree regressor to build a model that predicts estimated healthcare cost based on X values
+    healthcareTree = tree.DecisionTreeRegressor(presort=True)
     healthcareTree.fit(x,y) 
    
     return healthcareTree
 
-def estimatecost(healthcareTree,testx):
-    #iterate dataframe to find column most highly correlated with cost
-    #numpy correcoef may be useful here
-    #return index of best column
-    cost = healthcareTree.predict(testx)
+def estimatecost(healthcareTree,x):
+    #use our model to predict healthcare cost for a given set of X values
+    cost = healthcareTree.predict(x)
     return cost
-    
-def testAccuracy(data):
-    #use input data to search model
-    #input will come from front end as user provides information about themselves
-    #return closest estimate based on input data, this should be a single Y value
-    #X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
-    #print("Accuracy is " + accuracy_score(y_test,y_pred)*100)
+
+def calcsummaryinfo(gender,race,ethnicity,service,diagnosis):
     pass
 
-if __name__ == "__main__":
-		#for testing
-      #[70300,13,607]
-      testx = x.iloc[1500,:] #np.random.randn(1, 3))
-      
-      #textx = testx.reshape(1,-1)
-      #print(x)
+def testAccuracy(model):
+    #use input data to search model
+    #input will come from front end as user provides information about themselves
+    #return closest estimate based on input data, this should be a single Y value    
+    #y_pred = model.predict(X_test)
+    print("Accuracy is...")
+    print(model.score(x,y)*100)
 
-      model = buildmodel(x,y)
-      cost = estimatecost(model,testx)
+if __name__ == "__main__":
+
+      model = buildmodel(xtrain,ytrain)
+      cost = estimatecost(model,xtest)
       print(cost)
+      
+      testAccuracy(model)
       #pass
