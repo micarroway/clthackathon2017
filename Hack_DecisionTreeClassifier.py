@@ -30,9 +30,13 @@ le.transform(claims['DiagnosisCode'])
 x = claims.iloc[:,:-1]
 y = claims.iloc[:,-1]
 x = x.apply(le.fit_transform)
-claims = pandas.concat(x,y)
 
-print(x)
+#putting x and y back together to use later as one dataframe
+claims = pandas.concat([x,y],axis=1) 
+print(claims.shape)
+print(x.shape)
+print(y.shape)
+print(claims)
 
 def buildmodel(x,y):
     #choose column with highest correlation(gender, race, ethnicity, diagnosis code, servicesummary)
@@ -45,7 +49,7 @@ def buildmodel(x,y):
     #return new dataframe with trained estimates
     #x = claims.iloc[:,:-1]
     #y = claims.iloc[:,-1]
-    healthcareTree = tree.DecisionTreeClassifier()
+    healthcareTree = tree.DecisionTreeRegressor()
     healthcareTree.fit(x,y) #getting ValueError: could not convert string to float: 'F339', need to use labelencorder, in progress
 
 def chooseColumn(claims):
@@ -62,5 +66,5 @@ def searchmodel(data):
 
 if __name__ == "__main__":
 		#for testing
-		#buildmodel(claims)
-        pass
+		buildmodel(x,y)
+      #pass
